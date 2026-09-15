@@ -1,12 +1,6 @@
 """
-Catalog Module (Module 1) - STARTER CODE (Contains Bug #1)
-Responsible: Developer 1 / Branch: fix/catalog
-
-BUG DESCRIPTION:
-1. `find_books_by_genre` currently performs a strict case-sensitive match.
-   Searching for "software engineering" or "PYTHON" fails to match "Software Engineering" or "Python".
-2. `calculate_average_year` performs integer division `//` instead of float division `/`,
-   and crashes if books list is empty!
+Catalog Module (Module 1) - FIXED
+Responsible: Developer 1 (José) / Branch: fix/catalog
 """
 
 from typing import List, Dict, Any, Optional
@@ -44,21 +38,15 @@ def validate_book(book: Dict[str, Any]) -> bool:
 
 def find_books_by_genre(books: List[Dict[str, Any]], genre: str) -> List[Dict[str, Any]]:
     """
-    Find all books that belong to a specific genre.
-
-    TODO (Dev 1): Fix case-sensitivity bug!
-    Currently this only matches if the case matches exactly.
-    Make it match case-insensitively (e.g. 'software engineering' should match 'Software Engineering').
+    Find all books that belong to a specific genre (case-insensitive).
     """
     if not genre or not genre.strip():
         return []
 
-    # BUG #1A: Exact match fails when user searches with lowercase or uppercase!
-    # Expected: compare normalized strings using .lower()
-    # my fix
+    target_genre = genre.strip().lower()
     return [
         book for book in books
-        if genre in book.get("genres", [])
+        if any(g.strip().lower() == target_genre for g in book.get("genres", []))
     ]
 
 
@@ -78,11 +66,11 @@ def find_books_by_author(books: List[Dict[str, Any]], author_query: str) -> List
 
 def calculate_average_year(books: List[Dict[str, Any]]) -> float:
     """
-    Calculate the average publication year of books in the catalog.
-
-    TODO (Dev 1): Fix division and empty list handling!
-    Currently uses integer division '//' and does not handle empty list safely.
+    Calculate the average publication year of books in the catalog safely.
+    Returns 0.0 if the books list is empty.
     """
-    # BUG #1B: Missing empty check crashes, and integer division loses precision!
+    if not books:
+        return 0.0
+    
     total_years = sum(book.get("year", 0) for book in books)
-    return total_years // len(books)
+    return float(total_years / len(books))
